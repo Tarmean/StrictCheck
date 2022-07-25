@@ -28,7 +28,7 @@ prefixPatternDec idx patName binderNames npPat =
   PatSynD patName
           (PrefixPatSyn binderNames)
           ImplBidir
-          (ConP 'Wrap [ConP 'Eval [ConP 'GS [sumPattern idx npPat]]])
+          (ConP 'Wrap [] [ConP 'Eval [] [ConP 'GS [] [sumPattern idx npPat]]])
 
 infixPatternDec :: Int
                 -> Name
@@ -39,14 +39,14 @@ infixPatternDec idx patName lhsBinder rhsBinder npPat =
   PatSynD patName
           (InfixPatSyn lhsBinder rhsBinder)
           ImplBidir
-          (ConP 'Wrap [ConP 'Eval [ConP 'GS [sumPattern idx npPat]]])
+          (ConP 'Wrap [] [ConP 'Eval [] [ConP 'GS [] [sumPattern idx npPat]]])
 
 sumPattern :: Int -> Pat -> Pat
-sumPattern idx p | idx <= 0  = ConP 'Z [p]
-                 | otherwise = ConP 'S [sumPattern (idx-1) p]
+sumPattern idx p | idx <= 0  = ConP 'Z [] [p]
+                 | otherwise = ConP 'S [] [sumPattern (idx-1) p]
 
 productPattern :: [Type] -> Q (Pat, [Name])
-productPattern []       = return (ConP 'Nil [], [])
+productPattern []       = return (ConP 'Nil [] [], [])
 productPattern (_:args) = do
   (tailPat, names) <- productPattern args
   freshName <- newName "x"
