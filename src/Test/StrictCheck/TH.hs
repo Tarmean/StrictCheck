@@ -83,11 +83,11 @@ derivePatternSynonyms name = do
   case nameInfo of
     TyConI (DataD _ tyName tyVars _ constrs _) -> do
       let tyVarTypes = map (\tyVar -> case tyVar of
-                               PlainTV nm -> VarT nm
-                               KindedTV nm kd -> SigT (VarT nm) kd
+                               PlainTV nm _ -> VarT nm
+                               KindedTV nm _ kd -> SigT (VarT nm) kd
                            )
                            tyVars
-          ty = foldl AppT (ConT tyName) tyVarTypes
+          ty = foldl @[] AppT (ConT tyName) tyVarTypes
       decs <- mapM (uncurry (constructor2PatternDec ty)) (zip [0..] constrs)
       return $ (map fst decs) ++ (map snd decs)
     _ -> do
